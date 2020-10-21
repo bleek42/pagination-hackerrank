@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 class Articles extends React.Component {
   constructor() {
@@ -7,50 +7,58 @@ class Articles extends React.Component {
       page: 1,
       data: [],
       loading: true,
-      error: null
+      error: null,
     };
   }
 
   async componentDidMount() {
     const { page } = this.state;
     try {
-      const res = await fetch(`https://jsonmock.hackerrank.com/api/articles?page=${page}`);
+      const res = await fetch(
+        `https://jsonmock.hackerrank.com/api/articles?page=${page}`,
+      );
       const data = await res.json();
       this.setState({
         ...page,
-        ...data
+        data,
       });
-    }
-    catch (err) {
-      if (err) this.setState({
-        ...page,
-        error: true
-      });
-    }
-    finally {
+    } catch (err) {
+      if (err)
+        this.setState({
+          ...page,
+          error: true,
+        });
+    } finally {
       this.setState({
         ...this.state,
-        loading: false
+        loading: false,
+        error: false,
       });
     }
   }
 
   render() {
-    console.log(this.state.articles.data);
+    const { page, data, loading, error } = this.state;
     return (
-      <React.Fragment>
+      <Fragment>
         <div className="pagination">
-          <button data-testid="page-button" key="page-button-1">1</button>
-          <button data-testid="page-button" key="page-button-2">2</button>
+          <button data-testid="page-button" key="page-button-1">
+            1
+					</button>
+          <button data-testid="page-button" key="page-button-2">
+            2
+					</button>
         </div>
         <ul className="results">
-          {/* {articles.data.map((item, idx) => (
-            <li key={idx}>
-              <h4>{item.title}</h4>
-            </li>
-          ))} */}
+          {Object.entries(data).map((item, idx) => {
+            return (
+              <li key={idx}>
+                <h4>{item.title}</h4>
+              </li>
+            );
+          })}
         </ul>
-      </React.Fragment>
+      </Fragment>
     );
   }
 }
